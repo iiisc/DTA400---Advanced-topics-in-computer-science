@@ -42,7 +42,7 @@ class Carwash(object):
     def wash(self, car):
         """The washing processes. It takes a ``car`` processes and tries
         to clean it."""
-        yield self.env.timeout(random.randint(2,5), car)
+        yield self.env.timeout(random.randint(2,7), car)
 
     def repair(self, repairman):
         yield self.env.timeout(REPAIRTIME, repairman)
@@ -90,9 +90,11 @@ def setup(env, num_machines, washtime, t_inter):
         yield env.timeout(random.randint(t_inter - 2, t_inter + 2))
         i += 1
         env.process(car(env, 'Car %d' % i, carwash))
+
+        # Repairemännen dyker upp någon gång mellan bil 10 och bil 40. Då kommer NUM_MACHINES snubbar som köar till varsin tvätt och reparerar i 30 minuter var. 
         if i == RANDOM_REPAIR:
-            env.process(repairman(env, 'Repairman 1', carwash))
-            env.process(repairman(env, 'Repairman 2', carwash))
+            for j in range(NUM_MACHINES):
+                env.process(repairman(env, 'Repairman %d' % j, carwash))
 
 
 
