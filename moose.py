@@ -35,22 +35,13 @@ class skogen(object):
         yield self.env.timeout(1)
 
 def cykel(env):
-    #skog = skogen(env, VUXNA, KALVAR)
     while True:
         print(skog)
         skog.addera()
-        #print(env.now)
         yield env.timeout(1)
 
 
-
 env = simpy.Environment()
-
 skog = skogen(env, START_VUXNA, START_KALVAR)
 env.process(cykel(env))
-
-#print(env.now, skog)
-
-#env.process(setup(env, VUXNA, KALVAR))
-
 env.run(until=SIM_TIME)
