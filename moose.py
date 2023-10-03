@@ -7,8 +7,6 @@ import simpy
 SIM_TIME = 10
 START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
 START_VUXNA = 5000 
-ÅRLIG_MINSKNING = 0
-ÅRLIG_AVSKJUTNING = 0
 
 class skogen(object):
     def __init__(self, env, antal_vuxna, antal_kalvar):
