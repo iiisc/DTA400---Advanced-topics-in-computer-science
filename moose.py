@@ -4,10 +4,9 @@
 
 import simpy
 
-RANDOM_SEED = 25
 SIM_TIME = 10
-START_KALVAR = 10 # Älgar räknas som kalvar under sitt första levnadsår
-START_VUXNA = 10 
+START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
+START_VUXNA = 5000 
 ÅRLIG_MINSKNING = 0
 ÅRLIG_AVSKJUTNING = 0
 
@@ -18,26 +17,32 @@ class skogen(object):
         self.kalvar = antal_kalvar
 
     def __str__(self):
-        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {self.kalvar}'
+        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)}'
 
     def addera(self):
-        self.vuxna += (self.vuxna/2)
-        return self.vuxna
+        # Fjolårets kalvar flyttas upp till vuxengruppen
+        self.vuxna += self.kalvar
+        self.kalvar = 0
+        # Här föds nya kalvar
+        self.kalvar += (self.vuxna/2)
+        return
 
-    def minska(START_VUXNA):
-        pass
+    def minska(self):
+        # Naturlig minskning varje år
+        self.vuxna -= (self.vuxna/2)
+        return
 
-    def skjuta(START_VUXNA):
-        pass
-
-    def cykla(self):
-        
-        yield self.env.timeout(1)
+    def skjuta(self):
+        # Avskjutning varje år
+        return
 
 def cykel(env):
+    # Funktionen simulerar 1 år.
     while True:
         print(skog)
         skog.addera()
+        skog.minska()
+        skog.skjuta()
         yield env.timeout(1)
 
 
