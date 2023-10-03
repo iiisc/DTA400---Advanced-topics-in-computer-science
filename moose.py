@@ -5,37 +5,52 @@
 import simpy
 
 RANDOM_SEED = 25
-SIM_TIME = 300
-START_ÄLGAR = 100
-
-KALVAR = 0 # Älgar räknas som kalvar under sitt första levnadsår
-VUXNA = 0 
-ÅRLIG_ÖKNING = (VUXNA / 2) * 1.3 # Vi antar att hälften av alla vuxna älgar är älgkor
+SIM_TIME = 10
+START_KALVAR = 10 # Älgar räknas som kalvar under sitt första levnadsår
+START_VUXNA = 10 
 ÅRLIG_MINSKNING = 0
 ÅRLIG_AVSKJUTNING = 0
 
 class skogen(object):
-    def __init__(self, env):
+    def __init__(self, env, antal_vuxna, antal_kalvar):
         self.env = env
+        self.vuxna = antal_vuxna
+        self.kalvar = antal_kalvar
 
-    def addera(VUXNA):
-        VUXNA += ÅRLIG_ÖKNING 
+    def __str__(self):
+        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {self.kalvar}'
 
-    def minska(VUXNA):
+    def addera(self):
+        self.vuxna += (self.vuxna/2)
+        return self.vuxna
+
+    def minska(START_VUXNA):
         pass
 
-    def skjuta(VUXNA):
+    def skjuta(START_VUXNA):
         pass
 
-def setup(env):
-    skog = skogen(env)
+    def cykla(self):
+        
+        yield self.env.timeout(1)
 
+def cykel(env):
+    #skog = skogen(env, VUXNA, KALVAR)
     while True:
-        pass
+        print(skog)
+        skog.addera()
+        #print(env.now)
+        yield env.timeout(1)
+
 
 
 env = simpy.Environment()
-env.process(setup(env))
+
+skog = skogen(env, START_VUXNA, START_KALVAR)
+env.process(cykel(env))
+
+#print(env.now, skog)
+
+#env.process(setup(env, VUXNA, KALVAR))
+
 env.run(until=SIM_TIME)
-
-
