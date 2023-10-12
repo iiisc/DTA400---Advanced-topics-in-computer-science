@@ -73,12 +73,21 @@ def cykel(env):
         print(skog)
         yield env.timeout(1)
 
+def statistik():
+    plt.plot(skog.stats_skjutna, label = "Skjutna älgar")
+    plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
+    plt.plot(skog.stats_vuxna, label = "Vuxna älgar")
+    plt.plot(skog.stats_kalvar, label = "Älgkalvar")
+
+    plt.ylabel("Antal")
+    plt.xlabel("År")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
 if __name__ == "__main__":
     env = simpy.Environment()
     skog = skogen(env, START_VUXNA, START_KALVAR)
     env.process(cykel(env))
     env.run(until=SIM_TIME)
-
-    y = skog.stats_skjutna
-    plt.plot(y)
-    plt.show()
+    statistik()
