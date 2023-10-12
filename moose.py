@@ -64,7 +64,7 @@ class skogen(object):
         return
 
 def cykel(env):
-    # Funktionen simulerar 1 år.
+    """ Funktionen simulerar ett år """
     while True:
         skog.addera()
         skog.minska()
@@ -74,6 +74,7 @@ def cykel(env):
         yield env.timeout(1)
 
 def statistik():
+    """ Genererar en graf """
     plt.plot(skog.stats_skjutna, label = "Skjutna älgar")
     plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
     plt.plot(skog.stats_vuxna, label = "Vuxna älgar")
@@ -83,6 +84,7 @@ def statistik():
     plt.xlabel("År")
     plt.legend()
     plt.grid()
+    plt.ylim(0, 50000)
     plt.show()
 
 if __name__ == "__main__":
