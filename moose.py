@@ -4,6 +4,7 @@
 
 import simpy
 import random
+from matplotlib import pyplot as plt
 
 SIM_TIME = 10
 START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
@@ -18,8 +19,22 @@ class skogen(object):
         self.årlig_avskjutning = 0
         self.mål_avskjutning = self.vuxna * (AVSKJUTNING / 100)
 
+        #Statistik - År 0.
+        self.stats_vuxna = [self.vuxna]
+        self.stats_kalvar = [self.kalvar]
+        self.stats_skjutna = [self.årlig_avskjutning]
+        self.stats_mål_avskjutning = [self.mål_avskjutning]
+
     def __str__(self):
         return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)} - Skjutna älgar: {int(self.årlig_avskjutning)} - Mål skjutna: {int(self.mål_avskjutning)}'
+    
+    def update_statistics(self):
+        """ Lägger till årets värde sist i en lista """
+        self.stats_vuxna.append(self.vuxna)
+        self.stats_kalvar.append(self.kalvar)
+        self.stats_skjutna.append(self.årlig_avskjutning)
+        self.stats_mål_avskjutning.append(self.mål_avskjutning)
+
 
     def addera(self):
         """ Årlig ökning av antal älgar """ 
@@ -54,6 +69,7 @@ def cykel(env):
         skog.addera()
         skog.minska()
         skog.skjuta()
+        skog.update_statistics()
         print(skog)
         yield env.timeout(1)
 
@@ -62,3 +78,7 @@ if __name__ == "__main__":
     skog = skogen(env, START_VUXNA, START_KALVAR)
     env.process(cykel(env))
     env.run(until=SIM_TIME)
+
+    y = skog.stats_skjutna
+    plt.plot(y)
+    plt.show()
