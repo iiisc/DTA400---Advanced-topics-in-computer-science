@@ -9,15 +9,13 @@ import simpy
 import random
 from matplotlib import pyplot as plt
 
-SIM_TIME = 20
+SIM_TIME = 40
 START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
 START_VUXNA = 5000 
 global VUXNA_STAT
 global KALV_STAT
 VUXNA_STAT={}
 KALV_STAT={}
-d={1:'a'}
-d={2:'b'}
 
 AVSKJUTNING = 24 # Uttryckt i % av totala populationen, dvs vuxna + kalvar. Dock bara vuxna som blir skjutna. 
 
@@ -53,7 +51,7 @@ class skogen(object):
         # Fjolårets kalvar flyttas upp till vuxengruppen
         self.vuxna += self.kalvar
         self.kalvar = 0
-        # Här föds nya kalvar
+        # Här föds nya kalvar. I genomsnitt räknar vi med att varje älgko (givet 50% honor) föder 1 älgkalv. 
         self.kalvar += (self.vuxna/2)
         return
 
