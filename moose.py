@@ -2,6 +2,8 @@
 # X antal skjuts ihjäl varje år
 # Vi varierar antalet skjutna älgar och ser vad som händer med matplotlib
 
+## LÄGGER TILL EN KOMMENTAR FÖR GIT LABB!
+
 import matplotlib.pyplot as plt
 import numpy
 #matplotlib inline          #För jupyter notebook avkommentera
