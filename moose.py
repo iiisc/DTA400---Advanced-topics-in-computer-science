@@ -27,15 +27,19 @@ class skogen(object):
         self.kalvar = antal_kalvar
         self.årlig_avskjutning = 0
         self.mål_avskjutning = self.vuxna * (AVSKJUTNING / 100)
+        self.naturlig_död = 0
+
 
         #Statistik - År 0.
         self.stats_vuxna = [self.vuxna]
         self.stats_kalvar = [self.kalvar]
         self.stats_skjutna = [self.årlig_avskjutning]
         self.stats_mål_avskjutning = [self.mål_avskjutning]
+        self.stats_naturlig_död = [self.naturlig_död]
+
 
     def __str__(self):
-        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)} - Skjutna älgar: {int(self.årlig_avskjutning)} - Mål skjutna: {int(self.mål_avskjutning)}'
+        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)} - Skjutna älgar: {int(self.årlig_avskjutning)} - Mål skjutna: {int(self.mål_avskjutning)} - Naturligt döda: {int(self.naturlig_död)} '
     
     def update_statistics(self):
         """ Lägger till årets värde sist i en lista """
@@ -45,6 +49,7 @@ class skogen(object):
         self.stats_kalvar.append(self.kalvar)
         self.stats_skjutna.append(self.årlig_avskjutning)
         self.stats_mål_avskjutning.append(self.mål_avskjutning)
+        self.stats_naturlig_död.append(self.naturlig_död)
        
 
     def addera(self):
@@ -60,6 +65,7 @@ class skogen(object):
         # Naturlig minskning varje år 
         #Genomsnittsåldern är 15-25 år för en europeisk älg
         naturligtDöda=self.vuxna/20
+        self.naturlig_död=naturligtDöda
         self.vuxna -= naturligtDöda
         return
 
@@ -99,6 +105,8 @@ def statistik():
     plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
     plt.plot(skog.stats_vuxna, label = "Vuxna älgar")
     plt.plot(skog.stats_kalvar, label = "Älgkalvar")
+    plt.plot(skog.stats_naturlig_död, label="Naturlig död")
+
 
     plt.ylabel("Antal")
     plt.xlabel("År")
@@ -137,7 +145,7 @@ def runSimulation():
     print("Procent avskjutning ",AVSKJUTNING)
 
     print("Simuleringstid ",SIM_TIME)
-
+    
     env = simpy.Environment()
     global skog
     skog = skogen(env, START_VUXNA, START_KALVAR)
