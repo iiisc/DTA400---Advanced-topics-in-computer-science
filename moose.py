@@ -58,7 +58,8 @@ class skogen(object):
 
     def minska(self):
         # Naturlig minskning varje år
-        #self.vuxna -= (self.vuxna/2)
+        naturligtDöda=self.vuxna/20
+        self.vuxna -= naturligtDöda
         return
 
     def skjuta(self):
@@ -73,6 +74,7 @@ class skogen(object):
             avskjutningsProcentSlump=100
         self.årlig_avskjutning = (self.vuxna + self.kalvar) * avskjutningsProcentSlump / 100
 
+        print("Verklig procent i avskjutning ", avskjutningsProcentSlump)
 
         
         
@@ -84,8 +86,8 @@ def cykel(env):
     """ Funktionen simulerar ett år """
     while True:
         skog.addera()
-        skog.minska()
         skog.skjuta()
+        skog.minska()
         skog.update_statistics()
         print(skog)
         yield env.timeout(1)
