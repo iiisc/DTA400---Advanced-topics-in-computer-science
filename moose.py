@@ -9,7 +9,7 @@ import simpy
 import random
 from matplotlib import pyplot as plt
 
-SIM_TIME = 10
+SIM_TIME = 20
 START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
 START_VUXNA = 5000 
 global VUXNA_STAT
@@ -19,8 +19,7 @@ KALV_STAT={}
 d={1:'a'}
 d={2:'b'}
 
-
-AVSKJUTNING = 24
+AVSKJUTNING = 24 # Uttryckt i % av totala populationen, dvs vuxna + kalvar. Dock bara vuxna som blir skjutna. 
 
 class skogen(object):
     def __init__(self, env, antal_vuxna, antal_kalvar):
@@ -69,11 +68,11 @@ class skogen(object):
         slump_faktor = random.randint(-10, 10)
 
         # Uppdaterar två variabler som används i __str__
-        self.mål_avskjutning = self.vuxna * (AVSKJUTNING / 100)
-        self.årlig_avskjutning = self.vuxna * (AVSKJUTNING + slump_faktor) / 100
+        self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
+        self.årlig_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING + slump_faktor) / 100
         
         # Jaktsäsong
-        self.vuxna -= self.vuxna * ((AVSKJUTNING + slump_faktor) / 100)
+        self.vuxna -= (self.vuxna + self.kalvar) * ((AVSKJUTNING + slump_faktor) / 100)
         return
 
 def cykel(env):
@@ -97,7 +96,7 @@ def statistik():
     plt.xlabel("År")
     plt.legend()
     plt.grid()
-    plt.ylim(0, 50000)
+    #plt.ylim(0, 50000)
     plt.show()
 
 if __name__ == "__main__":
