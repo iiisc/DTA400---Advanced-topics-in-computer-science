@@ -57,7 +57,8 @@ class skogen(object):
         return
 
     def minska(self):
-        # Naturlig minskning varje år
+        # Naturlig minskning varje år 
+        #Genomsnittsåldern är 15-25 år för en europeisk älg
         naturligtDöda=self.vuxna/20
         self.vuxna -= naturligtDöda
         return
