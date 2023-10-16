@@ -8,6 +8,7 @@ import numpy
 import simpy
 import random
 from matplotlib import pyplot as plt
+import customtkinter
 
 SIM_TIME = 40
 START_KALVAR = 1000 # Älgar räknas som kalvar under sitt första levnadsår
@@ -96,10 +97,74 @@ def statistik():
     plt.grid()
     #plt.ylim(0, 50000)
     plt.show()
-
+""" 
 if __name__ == "__main__":
     env = simpy.Environment()
     skog = skogen(env, START_VUXNA, START_KALVAR)
     env.process(cykel(env))
     env.run(until=SIM_TIME)
     statistik()
+ """
+
+def runSimulation():
+    
+    if not startAlg.get():
+        startAlg.insert(0, 1000)
+    if not skjutMal.get():
+        skjutMal.insert(0, 24)
+    if not simuleringsTid.get():
+        simuleringsTid.insert(0, 10)
+    SIM_TIME=int(simuleringsTid.get())
+    START_VUXNA = int(startAlg.get()) 
+    AVSKJUTNING =int(skjutMal.get())
+
+    
+        
+    test=skjutMal.get()
+    print("Kör simulering")
+
+    print(SIM_TIME)
+    print(START_VUXNA)
+    print(AVSKJUTNING)
+
+    env = simpy.Environment()
+    global skog
+    skog = skogen(env, START_VUXNA, START_KALVAR)
+    env.process(cykel(env))
+    env.run(until=SIM_TIME)
+    statistik()
+
+
+
+##  GUI
+customtkinter.set_appearance_mode("system")
+
+customtkinter.set_default_color_theme("dark-blue")
+
+root=customtkinter.CTk()
+root.geometry("500x350")
+
+
+
+frame=customtkinter.CTkFrame(master=root)
+frame.pack(pady=20,padx=60,fill="both",expand=True)
+label=customtkinter.CTkLabel(master=frame, text="Älgar")
+
+
+
+startAlg =customtkinter.CTkEntry(master=frame,placeholder_text="Antal startälgar")
+startAlg.pack(padx=10,pady=12)
+
+skjutMal =customtkinter.CTkEntry(master=frame,placeholder_text="Mål att skjuta per år i procent")
+skjutMal.pack(padx=10,pady=12)
+
+simuleringsTid = customtkinter.CTkEntry(master=frame,placeholder_text="Simulerade år",)
+simuleringsTid.pack(pady=12,padx=10)
+
+startKnapp=customtkinter.CTkButton(master=frame,text="Starta simulering", command=runSimulation)
+startKnapp.pack(pady=12,padx=10)
+
+
+
+
+root.mainloop()
