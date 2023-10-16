@@ -18,7 +18,7 @@ global KALV_STAT
 VUXNA_STAT={}
 KALV_STAT={}
 
-AVSKJUTNING = 24 # Uttryckt i % av totala populationen, dvs vuxna + kalvar. Dock bara vuxna som blir skjutna. 
+#AVSKJUTNING = 24 # Uttryckt i % av totala populationen, dvs vuxna + kalvar. Dock bara vuxna som blir skjutna. 
 
 class skogen(object):
     def __init__(self, env, antal_vuxna, antal_kalvar):
@@ -70,6 +70,10 @@ class skogen(object):
         self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
         self.årlig_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING + slump_faktor) / 100
         
+        if self.årlig_avskjutning > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
+            self.årlig_avskjutning=100
+        
+        
         # Jaktsäsong
         self.vuxna -= (self.vuxna + self.kalvar) * ((AVSKJUTNING + slump_faktor) / 100)
         return
@@ -116,6 +120,7 @@ def runSimulation():
         simuleringsTid.insert(0, 10)
     SIM_TIME=int(simuleringsTid.get())
     START_VUXNA = int(startAlg.get()) 
+    global AVSKJUTNING
     AVSKJUTNING =int(skjutMal.get())
 
     
