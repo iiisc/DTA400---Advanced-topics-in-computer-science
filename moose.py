@@ -39,13 +39,13 @@ class skogen(object):
     
     def update_statistics(self):
         """ Lägger till årets värde sist i en lista """
+        if int(self.vuxna) < 0 :
+            self.vuxna=0
         self.stats_vuxna.append(self.vuxna)
         self.stats_kalvar.append(self.kalvar)
         self.stats_skjutna.append(self.årlig_avskjutning)
         self.stats_mål_avskjutning.append(self.mål_avskjutning)
-        VUXNA_STAT[self.env.now] = int(self.vuxna)
-        KALV_STAT [self.env.now] = int(self.kalvar)
-
+       
 
     def addera(self):
         """ Årlig ökning av antal älgar """ 
@@ -69,15 +69,15 @@ class skogen(object):
         # Uppdaterar två variabler som används i __str__
         self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
         avskjutningsProcentSlump=(AVSKJUTNING + slump_faktor) 
-        if self.årlig_avskjutning > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
-            self.årlig_avskjutning=100
+        if avskjutningsProcentSlump > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
+            avskjutningsProcentSlump=100
         self.årlig_avskjutning = (self.vuxna + self.kalvar) * avskjutningsProcentSlump / 100
 
 
         
         
         # Jaktsäsong
-        self.vuxna -= (self.vuxna + self.kalvar) * ((AVSKJUTNING + slump_faktor) / 100)
+        self.vuxna -= (self.vuxna + self.kalvar) * ((avskjutningsProcentSlump) / 100)
         return
 
 def cykel(env):
