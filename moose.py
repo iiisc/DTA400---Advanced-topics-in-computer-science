@@ -107,7 +107,7 @@ if __name__ == "__main__":
  """
 
 def runSimulation():
-    
+    plt.close()
     if not startAlg.get():
         startAlg.insert(0, 1000)
     if not skjutMal.get():
@@ -161,7 +161,7 @@ skjutMal.pack(padx=10,pady=12)
 simuleringsTid = customtkinter.CTkEntry(master=frame,placeholder_text="Simulerade år",)
 simuleringsTid.pack(pady=12,padx=10)
 
-startKnapp=customtkinter.CTkButton(master=frame,text="Starta simulering", command=runSimulation)
+startKnapp=customtkinter.CTkButton(master=frame,text="Starta simulering",command=runSimulation)
 startKnapp.pack(pady=12,padx=10)
 
 
