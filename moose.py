@@ -2,8 +2,6 @@
 # X antal skjuts ihjäl varje år
 # Vi varierar antalet skjutna älgar och ser vad som händer med matplotlib
 
-## LÄGGER TILL EN KOMMENTAR FÖR GIT LABB
-
 import matplotlib.pyplot as plt
 import numpy
 #matplotlib inline          #För jupyter notebook avkommentera
@@ -45,9 +43,6 @@ class skogen(object):
         self.stats_kalvar.append(self.kalvar)
         self.stats_skjutna.append(self.årlig_avskjutning)
         self.stats_mål_avskjutning.append(self.mål_avskjutning)
-        VUXNA_STAT[self.env.now] = int(self.vuxna)
-        KALV_STAT [self.env.now] = int(self.kalvar)
-
 
     def addera(self):
         """ Årlig ökning av antal älgar """ 
@@ -65,29 +60,41 @@ class skogen(object):
 
     def skjuta(self):
         """Avskjutning varje år. Utifrån publicerad data 2022 ca 83 000 skjuts varje år med en estimation av totalt 340 000 älgar. Dvs ca 24%"""
-        # Vi förutsätter att avskjutning sker inom +- 10%-enheter från vårt mål på 24%. 
+        # Vi förutsätter att avskjutning sker inom +- 10%-enheter från vårt mål. 
         slump_faktor = random.randint(-10, 10)
-
+        jaktstop = False
+        extra_jakt = 0
+        
+        if self.vuxna > 400000:
+            print("EXTRA JAKT!")
+            extra_jakt = 30
+            slump_faktor += 30
+        if self.vuxna < 50000:
+            print("JAKTSTOP!")
+            jaktstop = True
+            
         # Uppdaterar två variabler som används i __str__
-        self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
-        self.årlig_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING + slump_faktor) / 100
-        
-        if self.årlig_avskjutning > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
-            self.årlig_avskjutning=100
-        
-        
-        # Jaktsäsong
-        self.vuxna -= (self.vuxna + self.kalvar) * ((AVSKJUTNING + slump_faktor) / 100)
+        if not jaktstop:
+            if (AVSKJUTNING + slump_faktor + extra_jakt) < 100:
+                self.mål_avskjutning = self.vuxna * ( (AVSKJUTNING + extra_jakt) / 100)
+                self.årlig_avskjutning = self.vuxna * ((AVSKJUTNING + slump_faktor) / 100)
+                # Jaktsäsong
+                self.vuxna -= self.vuxna * ((AVSKJUTNING + slump_faktor) / 100)
+            else:
+                self.mål_avskjutning = self.vuxna
+                self.årlig_avskjutning = self.vuxna
+                # Jaktsäsong
+                self.vuxna -= self.vuxna
         return
 
 def cykel(env):
     """ Funktionen simulerar ett år """
     while True:
-        skog.addera()
-        skog.minska()
-        skog.skjuta()
-        skog.update_statistics()
         print(skog)
+        skog.skjuta()
+        skog.minska()
+        skog.addera()
+        skog.update_statistics()
         yield env.timeout(1)
 
 def statistik():
@@ -101,7 +108,6 @@ def statistik():
     plt.xlabel("År")
     plt.legend()
     plt.grid()
-    #plt.ylim(0, 50000)
     plt.show()
 """ 
 if __name__ == "__main__":
@@ -114,25 +120,23 @@ if __name__ == "__main__":
 
 def runSimulation():
     plt.close()
+    # Start variabler om inget anges i input-rutan
     if not startAlg.get():
         startAlg.insert(0, 1000)
     if not skjutMal.get():
         skjutMal.insert(0, 24)
     if not simuleringsTid.get():
         simuleringsTid.insert(0, 10)
+        
     SIM_TIME=int(simuleringsTid.get())
     START_VUXNA = int(startAlg.get()) 
     global AVSKJUTNING
     AVSKJUTNING =int(skjutMal.get())
-
-    
         
     test=skjutMal.get()
     print("Kör simulering")
     print("Start vuxna ", START_VUXNA)
-
     print("Procent avskjutning ",AVSKJUTNING)
-
     print("Simuleringstid ",SIM_TIME)
 
     env = simpy.Environment()
@@ -142,8 +146,6 @@ def runSimulation():
     env.run(until=SIM_TIME)
     statistik()
 
-
-
 ##  GUI
 customtkinter.set_appearance_mode("system")
 
@@ -152,14 +154,10 @@ customtkinter.set_default_color_theme("dark-blue")
 root=customtkinter.CTk()
 root.geometry("500x350")
 
-
-
 frame=customtkinter.CTkFrame(master=root)
 frame.pack(pady=20,padx=60,fill="both",expand=True)
 label=customtkinter.CTkLabel(master=frame, text="Älgar", font=("helvetica",30))
 label.pack(pady=10,padx=20)
-
-
 
 startAlg =customtkinter.CTkEntry(master=frame,placeholder_text="Antal startälgar")
 startAlg.pack(padx=10,pady=12)
@@ -172,8 +170,5 @@ simuleringsTid.pack(pady=12,padx=10)
 
 startKnapp=customtkinter.CTkButton(master=frame,text="Starta simulering",command=runSimulation)
 startKnapp.pack(pady=12,padx=10)
-
-
-
 
 root.mainloop()
