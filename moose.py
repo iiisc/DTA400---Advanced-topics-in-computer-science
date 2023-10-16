@@ -122,10 +122,11 @@ def runSimulation():
         
     test=skjutMal.get()
     print("Kör simulering")
+    print("Start vuxna ", START_VUXNA)
 
-    print(SIM_TIME)
-    print(START_VUXNA)
-    print(AVSKJUTNING)
+    print("Procent avskjutning ",AVSKJUTNING)
+
+    print("Simuleringstid ",SIM_TIME)
 
     env = simpy.Environment()
     global skog
