@@ -68,10 +68,12 @@ class skogen(object):
 
         # Uppdaterar två variabler som används i __str__
         self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
-        self.årlig_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING + slump_faktor) / 100
-        
+        avskjutningsProcentSlump=(AVSKJUTNING + slump_faktor) 
         if self.årlig_avskjutning > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
             self.årlig_avskjutning=100
+        self.årlig_avskjutning = (self.vuxna + self.kalvar) * avskjutningsProcentSlump / 100
+
+
         
         
         # Jaktsäsong
