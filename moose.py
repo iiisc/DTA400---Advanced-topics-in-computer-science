@@ -148,14 +148,15 @@ root.geometry("500x350")
 
 frame=customtkinter.CTkFrame(master=root)
 frame.pack(pady=20,padx=60,fill="both",expand=True)
-label=customtkinter.CTkLabel(master=frame, text="Älgar")
+label=customtkinter.CTkLabel(master=frame, text="Älgar", font=("helvetica",30))
+label.pack(pady=10,padx=20)
 
 
 
 startAlg =customtkinter.CTkEntry(master=frame,placeholder_text="Antal startälgar")
 startAlg.pack(padx=10,pady=12)
 
-skjutMal =customtkinter.CTkEntry(master=frame,placeholder_text="Mål att skjuta per år i procent")
+skjutMal =customtkinter.CTkEntry(master=frame,placeholder_text="Mål att skjuta i %")
 skjutMal.pack(padx=10,pady=12)
 
 simuleringsTid = customtkinter.CTkEntry(master=frame,placeholder_text="Simulerade år",)
