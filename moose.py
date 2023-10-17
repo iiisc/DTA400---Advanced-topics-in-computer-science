@@ -27,22 +27,31 @@ class skogen(object):
         self.kalvar = antal_kalvar
         self.årlig_avskjutning = 0
         self.mål_avskjutning = self.vuxna * (AVSKJUTNING / 100)
+        self.naturlig_död = 0
+
 
         #Statistik - År 0.
         self.stats_vuxna = [self.vuxna]
         self.stats_kalvar = [self.kalvar]
         self.stats_skjutna = [self.årlig_avskjutning]
         self.stats_mål_avskjutning = [self.mål_avskjutning]
+        self.stats_naturlig_död = [self.naturlig_död]
+
 
     def __str__(self):
-        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)} - Skjutna älgar: {int(self.årlig_avskjutning)} - Mål skjutna: {int(self.mål_avskjutning)}'
+        return f'År: {self.env.now} - Antal vuxna: {int(self.vuxna)} - Antal kalvar: {int(self.kalvar)} - Skjutna älgar: {int(self.årlig_avskjutning)} - Mål skjutna: {int(self.mål_avskjutning)} - Naturligt döda: {int(self.naturlig_död)} '
     
     def update_statistics(self):
         """ Lägger till årets värde sist i en lista """
+        if int(self.vuxna) < 0 :
+            self.vuxna=0
         self.stats_vuxna.append(self.vuxna)
         self.stats_kalvar.append(self.kalvar)
         self.stats_skjutna.append(self.årlig_avskjutning)
         self.stats_mål_avskjutning.append(self.mål_avskjutning)
+
+        self.stats_naturlig_död.append(self.naturlig_död)
+       
 
     def addera(self):
         """ Årlig ökning av antal älgar """ 
@@ -54,14 +63,18 @@ class skogen(object):
         return
 
     def minska(self):
-        # Naturlig minskning varje år
-        #self.vuxna -= (self.vuxna/2)
+        # Naturlig minskning varje år 
+        #Genomsnittsåldern är 15-25 år för en europeisk älg
+        naturligtDöda=self.vuxna/20
+        self.naturlig_död=naturligtDöda
+        self.vuxna -= naturligtDöda
         return
 
     def skjuta(self):
         """Avskjutning varje år. Utifrån publicerad data 2022 ca 83 000 skjuts varje år med en estimation av totalt 340 000 älgar. Dvs ca 24%"""
         # Vi förutsätter att avskjutning sker inom +- 10%-enheter från vårt mål. 
         slump_faktor = random.randint(-10, 10)
+
         jaktstop = False
         extra_jakt = 0
         
@@ -85,15 +98,26 @@ class skogen(object):
                 self.årlig_avskjutning = self.vuxna
                 # Jaktsäsong
                 self.vuxna -= self.vuxna
+
+        # Uppdaterar två variabler som används i __str__
+        self.mål_avskjutning = (self.vuxna + self.kalvar) * (AVSKJUTNING / 100)
+        avskjutningsProcentSlump=(AVSKJUTNING + slump_faktor) 
+        if avskjutningsProcentSlump > 100:        #Kontroll då det inte går att skjuta mer än 100 procent av populationen
+            avskjutningsProcentSlump=100
+        self.årlig_avskjutning = (self.vuxna + self.kalvar) * avskjutningsProcentSlump / 100
+
+        print("Verklig procent i avskjutning ", avskjutningsProcentSlump)
+        
+        # Jaktsäsong
+        self.vuxna -= (self.vuxna + self.kalvar) * ((avskjutningsProcentSlump) / 100)
         return
 
 def cykel(env):
     """ Funktionen simulerar ett år """
     while True:
-        print(skog)
+        skog.addera()
         skog.skjuta()
         skog.minska()
-        skog.addera()
         skog.update_statistics()
         yield env.timeout(1)
 
@@ -103,6 +127,8 @@ def statistik():
     plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
     plt.plot(skog.stats_vuxna, label = "Vuxna älgar")
     plt.plot(skog.stats_kalvar, label = "Älgkalvar")
+    plt.plot(skog.stats_naturlig_död, label="Naturlig död")
+
 
     plt.ylabel("Antal")
     plt.xlabel("År")
@@ -138,7 +164,7 @@ def runSimulation():
     print("Start vuxna ", START_VUXNA)
     print("Procent avskjutning ",AVSKJUTNING)
     print("Simuleringstid ",SIM_TIME)
-
+    
     env = simpy.Environment()
     global skog
     skog = skogen(env, START_VUXNA, START_KALVAR)
