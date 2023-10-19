@@ -88,10 +88,12 @@ class skogen(object):
         return
 
 def cykel(env):
+
     """ Funktionen simulerar ett år """
     while True:
         skog.skjuta()
-        skog.minska()
+        if naturligDöd.get() ==1:
+            skog.minska()
         skog.addera()
         skog.update_statistics()
         yield env.timeout(1)
@@ -99,10 +101,13 @@ def cykel(env):
 def statistik():
     """ Genererar en graf """
     plt.plot(skog.stats_skjutna, label = "Skjutna älgar")
-    plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
+    if showMål.get()==1:
+        plt.plot(skog.stats_mål_avskjutning, label = "Mål skjutna älgar")
     plt.plot(skog.stats_vuxna, label = "Vuxna älgar")
-    plt.plot(skog.stats_kalvar, label = "Älgkalvar")
-    plt.plot(skog.stats_naturlig_död, label="Naturlig död")
+    if showKalv.get()==1:
+        plt.plot(skog.stats_kalvar, label = "Älgkalvar")
+    if showNaturlig.get()==1:
+        plt.plot(skog.stats_naturlig_död, label="Naturlig död")
 
     plt.ylabel("Antal")
     plt.xlabel("År")
@@ -141,8 +146,13 @@ def runSimulation():
 customtkinter.set_appearance_mode("system")
 customtkinter.set_default_color_theme("dark-blue")
 
+global naturligDÖd
+global showKalv
+global showMål
+global showNaturlig
+
 root=customtkinter.CTk()
-root.geometry("500x350")
+root.geometry("500x550")
 
 frame=customtkinter.CTkFrame(master=root)
 frame.pack(pady=20,padx=60,fill="both",expand=True)
@@ -158,7 +168,17 @@ skjutMal.pack(padx=10,pady=12)
 simuleringsTid = customtkinter.CTkEntry(master=frame,placeholder_text="Simulerade år",)
 simuleringsTid.pack(pady=12,padx=10)
 
+naturligDöd = customtkinter.CTkCheckBox(master=frame,text="Räkna med naturlig död")
+naturligDöd.pack(pady=12,padx=10)
+
 startKnapp=customtkinter.CTkButton(master=frame,text="Starta simulering",command=runSimulation)
 startKnapp.pack(pady=12,padx=10)
+
+showKalv = customtkinter.CTkCheckBox(master=frame,text="Visa kalvstatistik")
+showKalv.pack(pady=12,padx=10)
+showMål =  customtkinter.CTkCheckBox(master=frame,text="Visa mål")
+showMål.pack(pady=12,padx=10)
+showNaturlig = customtkinter.CTkCheckBox(master=frame,text="Visa naturlig död statistik")
+showNaturlig.pack(pady=12,padx=10)
 
 root.mainloop()
